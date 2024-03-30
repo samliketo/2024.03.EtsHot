@@ -1,4 +1,44 @@
 library(ggplot2)
+library(data.table)
+library(lubridate)
+library(dplyr)
+
+BulkEM <- fread("datalog/BulkEM.csv", header = TRUE)
+str(BulkEM)
+
+# Classes ‘data.table’ and 'data.frame':	1009 obs. of  8 variables:
+#   $ Time                 : num  45354 45354 45354 45354 45354 ...
+# $ ms                   : int  0 0 0 0 0 0 0 0 0 0 ...
+# $ Pane1-EM102A_flow    : chr  "6,023.1651003" "5,968.5410307" "5,994.6484085" "6,032.3488774" ...
+# $ Pane1-EM102A_power   : chr  "12,491.3637805" "12,364.949673" "12,452.898568" "12,568.305648" ...
+# $ Pane1-EM102A_retTemp : num  11.5 11.5 11.5 11.5 11.5 ...
+# $ Pane1-EM102A_suppTemp: num  5.2 5.21 5.22 5.2 5.2 ...
+# $ Pane1-PT102A1_pv     : num  3.88 3.89 3.89 3.89 3.88 ...
+# $ Pane1-PT102A2_pv     : num  5.7 5.71 5.71 5.7 5.7 ...
+
+# print(BulkEM, digits = 21)
+# BulkEM <- read.table("datalog/BulkEM.xls", fileEncoding="UTF-16LE", header = TRUE)
+
+ymd_hms()
+
+BulkEMGOOD <-  BulkEM %>% 
+                mutate (Time1 = as.numeric(Time)) %>% 
+                mutate (as_datetime(Time, origin = "1970-01-01"))
+# Admin_Flow <- 
+#   mutate(Admin_Flow, Time1=Time0+days(7842)) %>%
+#   select(Time1, Data) %>%
+#   rename (Flow = Data)
+
+
+
+
+
+
+
+
+
+
+
 # Assuming your data is in a dataframe called `data`
 
 # Convert time column to date (assuming it's numeric)
