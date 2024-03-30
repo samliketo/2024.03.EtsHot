@@ -40,6 +40,7 @@ ggplot(weekly_means, aes(x = week, y = value)) +
 # dcdcdc
 # Explanation of changes:
 #   dcdcddccd
+# now i try edit in github
 #   We define a function called color_gradient that takes the current week number and the total number of weeks as arguments.
 # Inside the function, it calculates the absolute difference between each week in the data and the current week.
 # Based on this difference, we create an alpha value using a scaling function. Weeks closer to the current week will have a higher alpha (more opaque), resulting in a darker color.
