@@ -1,1 +1,105 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 ## ets hot
+
+```{r}
+library(ggplot2)
+library(readxl)
+library(dplyr)
+library(lubridate)
+
+```
+read_xls(path.expand(file)) # fixed
+
+```{r}
+BulkEM <- readxl::read_excel("datalog/BulkEM.xlsx")
+
+
+str(BulkEM)
+```
+
+##### to show that even though the time displayed (stored as text) seems like already round up, but actually it is still preserving the original many decimal points
+
+```{r}
+print(BulkEM$Time, digits = 21)
+```
+
+check the type of the time column
+```{r}
+str(BulkEM$Time)
+str(BulkEM$Timeformat)
+```
+
+renme columns
+```{r}
+BulkEM = rename(BulkEM, bulkemflow = 'Pane1-EM102A_flow', bulkRT = 'Pane1-EM102A_power')
+```
+
+# Calculate week number (1-52) considering Monday as the start of the week
+data$week <- format(data$time, "%U")
+
+# Group by week and calculate weekly mean for value
+weekly_means <- aggregate(value ~ week, data, FUN = mean)
+
+ggplot(weekly_means, aes(x = week, y = value)) +
+  geom_line(color = "blue") +  # adjust color as desired
+  labs(title = "Weekly Means (Monday-Sunday)",
+       x = "Week Number",
+       y = "Mean Value") +
+  theme_classic()
+```{r}
+
+```
+
+```{r}
+ln <- ggplot(data=BulkEM, aes(x=Timeformat, y=bulkemflow)) +
+      geom_line()
+  
+ln
+```
+
+
+```{r}
+BulkEM$day_of_week <- weekdays(BulkEM$Timeformat, abbr = TRUE)  # Abbreviated weekdays
+
+# Group by day of week and calculate daily mean for value
+daily_means <- aggregate(bulkemflow ~ day_of_week, BulkEM, FUN = mean)
+
+```
+
+
+
+```{r}
+ggplot(daily_means, aes(x = day_of_week, y = bulkemflow)) +
+  geom_line(color = "blue") +  # adjust color as desired
+  labs(title = "Daily Means (Monday-Sunday)",
+       x = "Day Number",
+       y = "Mean Value") +
+  theme_classic()
+```
+
+The date, which is currently formatted as a character, must first be converted to the numeric class.
+
+
+BulkEMGOOD <-  BulkEM %>% 
+                mutate (Time1 = as.numeric(Time)) %>% 
+                mutate (as.POSIXct(Time))
+
+
+           
+BulkEM$Time3 <- as.POSIXct(BulkEM$Time2, origin = "1899-12-30", tz = "Singapore")
+str(BulkEM$Time3)
+
+BulkEM$Time3 <- as.Date.POSIXct(BulkEM$Time2, origin = "1899-12-30", tz = "Singapore")
+str(BulkEM$Time3)
+
+
+
+ymd_hms()
+
+BulkEMGOOD <-  BulkEM %>% 
+                mutate (Time1 = as.numeric(Time)) %>% 
+                mutate (as_datetime(Time, origin = "1970-01-01"))
