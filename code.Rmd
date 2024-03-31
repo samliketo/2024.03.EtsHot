@@ -1,1 +1,79 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 ## ets hot
+
+```{r}
+library(ggplot2)
+library(readxl)
+library(dplyr)
+library(lubridate)
+
+```
+read_xls(path.expand(file)) # fixed
+
+```{r}
+BulkEM <- readxl::read_excel("datalog/BulkEM.xls.xlsx")
+
+
+str(BulkEM)
+```
+
+##### to show that even though the time displayed (stored as text) seems like already round up, but actually it is still preserving the original many decimal points
+
+```{r}
+print(BulkEM$Time, digits = 21)
+```
+
+check the type of the time column
+```{r}
+str(BulkEM$Time)
+```
+
+The date, which is currently formatted as a character, must first be converted to the numeric class.
+
+
+BulkEMGOOD <-  BulkEM %>% 
+                mutate (Time1 = as.numeric(Time)) %>% 
+                mutate (as.POSIXct(Time))
+
+### In some cases, there might be hidden characters or formatting issues within the character type that as.numeric() interprets incorrectly. Try converting the character type to a pure string first using as.character(), then converting it to numeric with stringsAsFactors = FALSE.
+
+```{r}
+BulkEM$Time1 <- as.character(BulkEM$Time, stringsAsFactors = FALSE)
+
+```
+
+### now change to numeric again
+
+```{r}
+BulkEM$Time2 <- as.numeric(BulkEM$Time1, stringsAsFactors = FALSE)
+sprintf(BulkEM$Time2, fmt = '%#.20f')        # Apply sprintf function
+str(BulkEM$Time2)
+```
+           
+BulkEM$Time3 <- as.POSIXct(BulkEM$Time2, origin = "1899-12-30", tz = "Singapore")
+str(BulkEM$Time3)
+
+BulkEM$Time3 <- as.Date.POSIXct(BulkEM$Time2, origin = "1899-12-30", tz = "Singapore")
+str(BulkEM$Time3)
+
+```{r}
+
+# Admin_Flow <- mutate(Admin_Flow, Time0=as.POSIXct(Timestamp, "%d/%m/%y %H:%M:%S", tz = "Singapore"))
+# df$datetime <- as.POSIXct(as.numeric(df$data), origin = "1970-01-01", tz = "UTC")
+BulkEM$Time3 <- as.POSIXct(BulkEM$Time2, origin = "1899-12-30", tz = "Singapore")
+str(BulkEM$Time3)
+
+```
+
+# 
+# BulkEM <- read.table("datalog/BulkEM.xls", fileEncoding="UTF-16LE", header = TRUE)
+
+ymd_hms()
+
+BulkEMGOOD <-  BulkEM %>% 
+                mutate (Time1 = as.numeric(Time)) %>% 
+                mutate (as_datetime(Time, origin = "1970-01-01"))
